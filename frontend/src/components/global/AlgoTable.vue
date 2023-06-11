@@ -27,7 +27,9 @@
                     </td>
 
                     <td>
-                        <input type="color" v-model="row.color" />
+                        <div class="color-picker-wrapper" @click="openColorPicker(row)" @newColor="handleColorSelection(selectedColor)">
+                            <div class="actual-color" :style="{ backgroundColor: row.color }"></div>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -41,13 +43,14 @@
     import PickVariableModal from "@/components/modals/code/PickVariableModal.vue";
     import SelectPropertyTypeModal from "@/components/modals/type/SelectPropertyTypeModal.vue";
     import SelectConverterModal from "@/components/modals/converter/SelectConverterModal.vue";
+    import PickColorModal from "@/components/modals/colorPicker/PickColorModal.vue";
     import { getSceneObjectTypeLabel } from "@/javascript/utils/sceneObjectTypesUtils";
     import { pushModal } from "jenesius-vue-modal";
     import { defineComponent } from "vue";
     import { cloneDeep } from "lodash";
 
     export default defineComponent({
-        components: { AlgoLink },
+        components: { AlgoLink, PickColorModal },
         props: ["sceneObject", "label", "headers", "emptyRow"],
 
         data() {
@@ -96,6 +99,19 @@
                     },
                 });
             },
+
+            openColorPicker(row) {
+                pushModal(PickColorModal, {
+                    callback: (selectedColor) => {
+                        row.color = selectedColor;
+                        console.log(selectedColor);
+                    },
+                });
+            },
+
+            handleColorSelection(selectedColor) {
+                console.log(selectedColor);
+            },
         },
 
         computed: {
@@ -129,5 +145,17 @@
         &__remove-row {
             cursor: pointer;
         }
+    }
+
+    .color-picker-wrapper {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .actual-color {
+        width: 24px;
+        height: 24px;
+        border: 1px solid #ccc;
     }
 </style>
